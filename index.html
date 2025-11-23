@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Matching App - Enterprise</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="center-box">
+        <h2 class="app-title">Resume Matching Portal</h2>
+        <p class="subtitle">Sign in to continue</p>
+        <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="e.g. admin or hr">
+        </div>
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" placeholder="Enter password">
+        </div>
+        <button id="login-btn" class="btn primary">Login</button>
+        <p class="muted small">
+            Demo: <strong>admin / admin123</strong> or <strong>hr / hr123</strong>
+        </p>
+        <p class="error" id="login-error"></p>
+    </div>
+
+    <!-- MAIN APP SCREEN -->
+    <div id="app-screen" class="app hidden">
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="brand">
+                <div class="brand-logo">RM</div>
+                <div class="brand-text">
+                    <div class="brand-title">Resume Matching Suite</div>
+                    <div class="brand-subtitle">Enterprise HR Workspace</div>
+                </div>
+            </div>
+            <div class="topbar-right">
+                <span id="current-user-label" class="user-pill">User: -</span>
+                <button id="top-theme-toggle" class="btn ghost small">Toggle Theme</button>
+                <button id="logout-btn" class="btn danger small">Logout</button>
+            </div>
+        </header>
+
+        <div class="layout">
+            <!-- SIDEBAR -->
+            <aside class="sidebar">
+                <button class="nav-item active" data-view="dashboard">📊 Dashboard</button>
+                <button class="nav-item" data-view="resumes">📂 Resumes</button>
+                <button class="nav-item" data-view="jobs">📄 Job Descriptions</button>
+                <button class="nav-item" data-view="matching">🎯 Matching</button>
+                <button class="nav-item admin-only" data-view="users">👥 User Management</button>
+                <button class="nav-item" data-view="settings">⚙️ Settings</button>
+                <button class="nav-item" data-view="help">❓ Help</button>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main class="content">
+
+                <!-- DASHBOARD VIEW -->
+                <section id="view-dashboard" class="view">
+                    <h2>Dashboard</h2>
+                    <p class="muted">Overview of your hiring workspace.</p>
+                    <div class="card-grid">
+                        <div class="card">
+                            <div class="card-label">Total Resumes</div>
+                            <div id="dash-resume-count" class="card-value">0</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-label">Job Descriptions</div>
+                            <div id="dash-job-count" class="card-value">0</div>
+                        </div>
+                        <div class="card">
+                            <div class="card-label">Active Users</div>
+                            <div id="dash-user-count" class="card-value">0</div>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Recent Activity (Demo)</h3>
+                        <ul class="activity-list" id="activity-list">
+                            <!-- filled by JS -->
+                        </ul>
+                    </div>
+                </section>
+
+                <!-- RESUMES VIEW -->
+                <section id="view-resumes" class="view hidden">
+                    <div class="view-header">
+                        <div>
+                            <h2>Resumes</h2>
+                            <p class="muted">Maintain your candidate resume database.</p>
+                        </div>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h3 id="resume-form-title">Add Resume</h3>
+                            <form id="resume-form">
+                                <input type="hidden" id="resume-id">
+                                <div class="form-group">
+                                    <label for="resume-name">Candidate Name</label>
+                                    <input type="text" id="resume-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="resume-email">Email</label>
+                                    <input type="email" id="resume-email">
+                                </div>
+                                <div class="form-group">
+                                    <label for="resume-headline">Headline / Position</label>
+                                    <input type="text" id="resume-headline" placeholder="e.g. Junior Data Analyst">
+                                </div>
+                                <div class="form-group">
+                                    <label for="resume-skills">Key Skills (comma separated)</label>
+                                    <input type="text" id="resume-skills" placeholder="Excel, Power BI, SQL">
+                                </div>
+                                <div class="form-group">
+                                    <label for="resume-summary">Summary / Experience</label>
+                                    <textarea id="resume-summary" rows="4" placeholder="Paste summary from resume..."></textarea>
+                                </div>
+                                <div class="btn-row">
+                                    <button type="submit" class="btn primary" id="resume-submit-btn">Save Resume</button>
+                                    <button type="button" class="btn ghost" id="resume-reset-btn">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header-inline">
+                                <h3>Resume List</h3>
+                                <span class="muted small" id="resume-count-label">0 records</span>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Headline</th>
+                                            <th>Skills</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="resume-table-body">
+                                        <!-- rows via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- JOB DESCRIPTIONS VIEW -->
+                <section id="view-jobs" class="view hidden">
+                    <div class="view-header">
+                        <div>
+                            <h2>Job Descriptions</h2>
+                            <p class="muted">Manage open positions and required skills.</p>
+                        </div>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h3 id="job-form-title">Add Job Description</h3>
+                            <form id="job-form">
+                                <input type="hidden" id="job-id">
+                                <div class="form-group">
+                                    <label for="job-title">Job Title</label>
+                                    <input type="text" id="job-title" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-dept">Department</label>
+                                    <input type="text" id="job-dept" placeholder="e.g. Finance, Analytics">
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-location">Location</label>
+                                    <input type="text" id="job-location" placeholder="e.g. Jaipur">
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-skills">Required Skills (comma separated)</label>
+                                    <input type="text" id="job-skills" placeholder="Tally, Busy, Excel">
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-description">Description</label>
+                                    <textarea id="job-description" rows="4" placeholder="Role, responsibilities, expectations..."></textarea>
+                                </div>
+                                <div class="btn-row">
+                                    <button type="submit" class="btn primary" id="job-submit-btn">Save Job</button>
+                                    <button type="button" class="btn ghost" id="job-reset-btn">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header-inline">
+                                <h3>Job List</h3>
+                                <span class="muted small" id="job-count-label">0 records</span>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Dept</th>
+                                            <th>Location</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="job-table-body">
+                                        <!-- rows via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MATCHING VIEW -->
+                <section id="view-matching" class="view hidden">
+                    <div class="view-header">
+                        <div>
+                            <h2>Resume Matching</h2>
+                            <p class="muted">Match a candidate resume against a job description.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="flex-row">
+                            <div class="form-group flex-1">
+                                <label for="match-resume-select">Select Resume</label>
+                                <select id="match-resume-select"></select>
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="match-job-select">Select Job</label>
+                                <select id="match-job-select"></select>
+                            </div>
+                        </div>
+                        <div class="btn-row">
+                            <button id="run-match-btn" class="btn primary">Run Match</button>
+                        </div>
+                        <div id="match-result" class="match-result">
+                            <p class="muted">No match run yet.</p>
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-header-inline">
+                            <h3>Top Matches (All)</h3>
+                            <span class="muted small">Auto-calculated based on skills and text overlap.</span>
+                        </div>
+                        <div class="table-wrapper">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Resume</th>
+                                        <th>Job</th>
+                                        <th>Score (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="match-table-body">
+                                    <!-- rows by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- USER MANAGEMENT VIEW -->
+                <section id="view-users" class="view hidden">
+                    <div class="view-header">
+                        <div>
+                            <h2>User Management</h2>
+                            <p class="muted">Admins can manage HR users for this portal.</p>
+                        </div>
+                        <span class="tag">Admin Only</span>
+                    </div>
+
+                    <div class="two-column">
+                        <div class="card">
+                            <h3 id="user-form-title">Add User</h3>
+                            <form id="user-form">
+                                <input type="hidden" id="user-id">
+                                <div class="form-group">
+                                    <label for="user-name">Full Name</label>
+                                    <input type="text" id="user-name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-username">Username</label>
+                                    <input type="text" id="user-username" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-password">Password</label>
+                                    <input type="password" id="user-password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="user-role">Role</label>
+                                    <select id="user-role">
+                                        <option value="HR">HR</option>
+                                        <option value="Admin">Admin</option>
+                                    </select>
+                                </div>
+                                <div class="btn-row">
+                                    <button type="submit" class="btn primary" id="user-submit-btn">Save User</button>
+                                    <button type="button" class="btn ghost" id="user-reset-btn">Clear</button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="card">
+                            <div class="card-header-inline">
+                                <h3>User List</h3>
+                                <span class="muted small" id="user-count-label">0 users</span>
+                            </div>
+                            <div class="table-wrapper">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Username</th>
+                                            <th>Role</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="user-table-body">
+                                        <!-- rows -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SETTINGS VIEW -->
+                <section id="view-settings" class="view hidden">
+                    <h2>Settings</h2>
+                    <p class="muted">Personalize your workspace.</p>
+
+                    <div class="card">
+                        <h3>Appearance</h3>
+                        <div class="form-group inline">
+                            <label for="theme-toggle">Dark Mode</label>
+                            <input type="checkbox" id="theme-toggle">
+                        </div>
+                    </div>
+
+                    <div class="card">
+                        <h3>Data</h3>
+                        <p class="muted small">
+                            This app stores demo data in your browser (localStorage). You can clear and reset it any time.
+                        </p>
+                        <button id="reset-data-btn" class="btn danger">Clear & Reset Demo Data</button>
+                    </div>
+                </section>
+
+                <!-- HELP VIEW -->
+                <section id="view-help" class="view hidden">
+                    <h2>Help & Usage</h2>
+                    <div class="card">
+                        <h3>How to use</h3>
+                        <ol class="help-list">
+                            <li>Login with <strong>admin / admin123</strong> or <strong>hr / hr123</strong>.</li>
+                            <li>Go to <strong>Resumes</strong> to add candidate information.</li>
+                            <li>Go to <strong>Job Descriptions</strong> to define open positions.</li>
+                            <li>Go to <strong>Resume Matching</strong> to match candidates to jobs.</li>
+                            <li>Admins can go to <strong>User Management</strong> to create HR logins.</li>
+                            <li>Use <strong>Settings</strong> for theme and data reset.</li>
+                        </ol>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- GENERIC POPUP -->
+    <div id="popup" class="popup hidden">
+        <div class="popup-box">
+            <h3 id="popup-title"></h3>
+            <p id="popup-content"></p>
+            <button id="popup-close" class="btn primary small">Close</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
