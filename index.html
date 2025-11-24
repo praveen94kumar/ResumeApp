@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resume Matching App - Enterprise</title>
+    <title>Pristine Resume Matching Suite</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <!-- LOGIN SCREEN -->
     <div id="login-screen" class="center-box">
-        <h2 class="app-title">Resume Matching Portal</h2>
-        <p class="subtitle">Sign in to continue</p>
+        <div class="login-brand">
+            <img src="assets/logo.png" alt="Pristine Logo" class="login-logo">
+            <div>
+                <h2 class="app-title">Pristine Technologies &amp; Industries</h2>
+                <p class="subtitle">Resume Matching Portal</p>
+            </div>
+        </div>
         <div class="form-group">
             <label for="username">Username</label>
             <input type="text" id="username" placeholder="e.g. admin or hr">
@@ -32,10 +37,10 @@
         <!-- TOP BAR -->
         <header class="topbar">
             <div class="brand">
-                <div class="brand-logo">RM</div>
+                <img src="assets/logo.png" alt="Pristine Logo" class="brand-logo-img">
                 <div class="brand-text">
                     <div class="brand-title">Resume Matching Suite</div>
-                    <div class="brand-subtitle">Enterprise HR Workspace</div>
+                    <div class="brand-subtitle">Pristine Technologies &amp; Industries</div>
                 </div>
             </div>
             <div class="topbar-right">
@@ -48,6 +53,9 @@
         <div class="layout">
             <!-- SIDEBAR -->
             <aside class="sidebar">
+                <div class="sidebar-header">
+                    <span class="sidebar-company">Pristine HR Workspace</span>
+                </div>
                 <button class="nav-item active" data-view="dashboard">📊 Dashboard</button>
                 <button class="nav-item" data-view="resumes">📂 Resumes</button>
                 <button class="nav-item" data-view="jobs">📄 Job Descriptions</button>
@@ -81,9 +89,7 @@
 
                     <div class="card">
                         <h3>Recent Activity (Demo)</h3>
-                        <ul class="activity-list" id="activity-list">
-                            <!-- filled by JS -->
-                        </ul>
+                        <ul class="activity-list" id="activity-list"></ul>
                     </div>
                 </section>
 
@@ -121,6 +127,13 @@
                                     <label for="resume-summary">Summary / Experience</label>
                                     <textarea id="resume-summary" rows="4" placeholder="Paste summary from resume..."></textarea>
                                 </div>
+                                <div class="form-group">
+                                    <label for="resume-file">Upload Resume (demo supports .txt)</label>
+                                    <input type="file" id="resume-file" accept=".txt,.pdf,.doc,.docx">
+                                    <p class="hint small muted">
+                                        In this demo, .txt files are auto-read into Summary.
+                                    </p>
+                                </div>
                                 <div class="btn-row">
                                     <button type="submit" class="btn primary" id="resume-submit-btn">Save Resume</button>
                                     <button type="button" class="btn ghost" id="resume-reset-btn">Clear</button>
@@ -143,9 +156,7 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="resume-table-body">
-                                        <!-- rows via JS -->
-                                    </tbody>
+                                    <tbody id="resume-table-body"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -184,7 +195,11 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="job-description">Description</label>
-                                    <textarea id="job-description" rows="4" placeholder="Role, responsibilities, expectations..."></textarea>
+                                    <textarea id="job-description" rows="4"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="job-file">Upload JD (.txt)</label>
+                                    <input type="file" id="job-file" accept=".txt,.pdf,.doc,.docx">
                                 </div>
                                 <div class="btn-row">
                                     <button type="submit" class="btn primary" id="job-submit-btn">Save Job</button>
@@ -208,9 +223,7 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="job-table-body">
-                                        <!-- rows via JS -->
-                                    </tbody>
+                                    <tbody id="job-table-body"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -222,7 +235,7 @@
                     <div class="view-header">
                         <div>
                             <h2>Resume Matching</h2>
-                            <p class="muted">Match a candidate resume against a job description.</p>
+                            <p class="muted">Match a resume against a job description.</p>
                         </div>
                     </div>
 
@@ -248,7 +261,6 @@
                     <div class="card">
                         <div class="card-header-inline">
                             <h3>Top Matches (All)</h3>
-                            <span class="muted small">Auto-calculated based on skills and text overlap.</span>
                         </div>
                         <div class="table-wrapper">
                             <table class="table">
@@ -259,9 +271,7 @@
                                         <th>Score (%)</th>
                                     </tr>
                                 </thead>
-                                <tbody id="match-table-body">
-                                    <!-- rows by JS -->
-                                </tbody>
+                                <tbody id="match-table-body"></tbody>
                             </table>
                         </div>
                     </div>
@@ -272,7 +282,6 @@
                     <div class="view-header">
                         <div>
                             <h2>User Management</h2>
-                            <p class="muted">Admins can manage HR users for this portal.</p>
                         </div>
                         <span class="tag">Admin Only</span>
                     </div>
@@ -323,9 +332,7 @@
                                             <th>Actions</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="user-table-body">
-                                        <!-- rows -->
-                                    </tbody>
+                                    <tbody id="user-table-body"></tbody>
                                 </table>
                             </div>
                         </div>
@@ -335,7 +342,6 @@
                 <!-- SETTINGS VIEW -->
                 <section id="view-settings" class="view hidden">
                     <h2>Settings</h2>
-                    <p class="muted">Personalize your workspace.</p>
 
                     <div class="card">
                         <h3>Appearance</h3>
@@ -347,26 +353,37 @@
 
                     <div class="card">
                         <h3>Data</h3>
-                        <p class="muted small">
-                            This app stores demo data in your browser (localStorage). You can clear and reset it any time.
-                        </p>
-                        <button id="reset-data-btn" class="btn danger">Clear & Reset Demo Data</button>
+                        <p class="muted small">This app stores demo data in your browser.</p>
+                        <button id="reset-data-btn" class="btn danger">Clear &amp; Reset Demo Data</button>
                     </div>
                 </section>
 
                 <!-- HELP VIEW -->
                 <section id="view-help" class="view hidden">
-                    <h2>Help & Usage</h2>
+                    <h2>Help &amp; Usage</h2>
+
                     <div class="card">
                         <h3>How to use</h3>
                         <ol class="help-list">
                             <li>Login with <strong>admin / admin123</strong> or <strong>hr / hr123</strong>.</li>
-                            <li>Go to <strong>Resumes</strong> to add candidate information.</li>
-                            <li>Go to <strong>Job Descriptions</strong> to define open positions.</li>
-                            <li>Go to <strong>Resume Matching</strong> to match candidates to jobs.</li>
-                            <li>Admins can go to <strong>User Management</strong> to create HR logins.</li>
-                            <li>Use <strong>Settings</strong> for theme and data reset.</li>
+                            <li>Add resumes in the Resumes tab.</li>
+                            <li>Add job descriptions in the Jobs tab.</li>
+                            <li>Run matching in the Matching tab.</li>
+                            <li>Only Admins can manage users.</li>
                         </ol>
+                    </div>
+
+                    <div class="card">
+                        <h3>HR Assistant Chatbot</h3>
+                        <div id="chat-window" class="chat-window">
+                            <div class="chat-message bot">
+                                Hi, I'm your Pristine HR assistant. Ask me anything.
+                            </div>
+                        </div>
+                        <div class="chat-input-row">
+                            <input type="text" id="chat-input" placeholder="Ask a question...">
+                            <button id="chat-send-btn" class="btn primary small">Send</button>
+                        </div>
                     </div>
                 </section>
 
