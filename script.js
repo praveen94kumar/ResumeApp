@@ -145,7 +145,6 @@ function switchView(viewName) {
     const activeBtn = document.querySelector(`.nav-item[data-view="${viewName}"]`);
     if (activeBtn) activeBtn.classList.add("active");
 
-    // Lazy render/refresh for some views
     if (viewName === "dashboard") renderDashboard();
     if (viewName === "resumes") renderResumes();
     if (viewName === "jobs") renderJobs();
@@ -261,6 +260,7 @@ function resetResumeForm() {
     document.getElementById("resume-headline").value = "";
     document.getElementById("resume-skills").value = "";
     document.getElementById("resume-summary").value = "";
+    document.getElementById("resume-file").value = "";
     document.getElementById("resume-form-title").textContent = "Add Resume";
     document.getElementById("resume-submit-btn").textContent = "Save Resume";
 }
@@ -292,6 +292,25 @@ function handleResumeTableClick(e) {
         renderResumes();
         populateMatchDropdowns();
         renderMatchTable();
+    }
+}
+
+function handleResumeFileChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            document.getElementById("resume-summary").value = reader.result;
+            showPopup("Resume imported", "Text has been copied into the Summary field. You can edit it before saving.");
+        };
+        reader.readAsText(file);
+    } else {
+        showPopup(
+            "File type note",
+            "In this browser demo only .txt files can be auto-read. For PDF / Word, please copy the key text into the Summary field."
+        );
     }
 }
 
@@ -362,6 +381,7 @@ function resetJobForm() {
     document.getElementById("job-location").value = "";
     document.getElementById("job-skills").value = "";
     document.getElementById("job-description").value = "";
+    document.getElementById("job-file").value = "";
     document.getElementById("job-form-title").textContent = "Add Job Description";
     document.getElementById("job-submit-btn").textContent = "Save Job";
 }
@@ -393,6 +413,25 @@ function handleJobTableClick(e) {
         renderJobs();
         populateMatchDropdowns();
         renderMatchTable();
+    }
+}
+
+function handleJobFileChange(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.type === "text/plain" || file.name.toLowerCase().endsWith(".txt")) {
+        const reader = new FileReader();
+        reader.onload = () => {
+            document.getElementById("job-description").value = reader.result;
+            showPopup("JD imported", "Text has been copied into the Description field. You can edit it before saving.");
+        };
+        reader.readAsText(file);
+    } else {
+        showPopup(
+            "File type note",
+            "In this browser demo only .txt files can be auto-read. For PDF / Word, please copy the key text into the Description field."
+        );
     }
 }
 
@@ -630,6 +669,65 @@ function showPopup(title, message) {
     document.getElementById("popup").classList.remove("hidden");
 }
 
+// ---------- CHATBOT ----------
+const BOT_FAQS = [
+    {
+        match: ["add resume", "resume add", "candidate"],
+        answer: "Go to the Resumes tab, fill candidate details or upload a .txt resume, then click Save Resume."
+    },
+    {
+        match: ["upload resume", "resume upload"],
+        answer: "In Resumes tab, use the Upload Resume field. For .txt files, the text is auto-copied into Summary. For PDF/Word, upload and paste key text manually."
+    },
+    {
+        match: ["job description", "add jd", "add job"],
+        answer: "Open Job Descriptions tab, enter the job details or upload a .txt JD file, then click Save Job."
+    },
+    {
+        match: ["match", "score", "matching"],
+        answer: "Use the Matching tab. Select a resume and a job, click Run Match. Scores are based on overlapping keywords in skills, headline and description."
+    },
+    {
+        match: ["user", "admin", "hr"],
+        answer: "Only Admin users can manage logins in the User Management tab. HR users can add resumes, jobs and run matching."
+    },
+    {
+        match: ["reset data", "clear data"],
+        answer: "Open Settings tab and click 'Clear & Reset Demo Data'."
+    }
+];
+
+function getBotReply(text) {
+    const q = text.toLowerCase();
+    for (const item of BOT_FAQS) {
+        if (item.match.some((m) => q.includes(m))) {
+            return item.answer;
+        }
+    }
+    return "I didn't fully catch that. Try asking things like 'How to upload resume', 'How matching works', or 'How to add a job description'.";
+}
+
+function appendChatMessage(sender, text) {
+    const windowEl = document.getElementById("chat-window");
+    if (!windowEl) return;
+    const msg = document.createElement("div");
+    msg.classList.add("chat-message", sender === "bot" ? "bot" : "user");
+    msg.textContent = text;
+    windowEl.appendChild(msg);
+    windowEl.scrollTop = windowEl.scrollHeight;
+}
+
+function handleChatSend() {
+    const input = document.getElementById("chat-input");
+    if (!input) return;
+    const text = input.value.trim();
+    if (!text) return;
+    appendChatMessage("user", text);
+    input.value = "";
+    const reply = getBotReply(text);
+    setTimeout(() => appendChatMessage("bot", reply), 200);
+}
+
 // ---------- INIT ----------
 document.addEventListener("DOMContentLoaded", () => {
     seedDemoData();
@@ -680,11 +778,19 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("resume-form").addEventListener("submit", handleResumeFormSubmit);
     document.getElementById("resume-reset-btn").addEventListener("click", resetResumeForm);
     document.getElementById("resume-table-body").addEventListener("click", handleResumeTableClick);
+    const resumeFileInput = document.getElementById("resume-file");
+    if (resumeFileInput) {
+        resumeFileInput.addEventListener("change", handleResumeFileChange);
+    }
 
     // Job events
     document.getElementById("job-form").addEventListener("submit", handleJobFormSubmit);
     document.getElementById("job-reset-btn").addEventListener("click", resetJobForm);
     document.getElementById("job-table-body").addEventListener("click", handleJobTableClick);
+    const jobFileInput = document.getElementById("job-file");
+    if (jobFileInput) {
+        jobFileInput.addEventListener("change", handleJobFileChange);
+    }
 
     // Matching
     document.getElementById("run-match-btn").addEventListener("click", runSingleMatch);
@@ -696,4 +802,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Settings
     document.getElementById("reset-data-btn").addEventListener("click", resetAllData);
+
+    // Chatbot
+    const chatSendBtn = document.getElementById("chat-send-btn");
+    const chatInput = document.getElementById("chat-input");
+    if (chatSendBtn) chatSendBtn.addEventListener("click", handleChatSend);
+    if (chatInput) {
+        chatInput.addEventListener("keydown", (e) => {
+            if (e.key === "Enter") handleChatSend();
+        });
+    }
 });
