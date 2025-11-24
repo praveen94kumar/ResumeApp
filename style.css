@@ -38,7 +38,7 @@ body {
 
 /* LOGIN */
 .center-box {
-    width: 360px;
+    width: 420px;
     margin: 80px auto;
     padding: 24px 24px 16px;
     background: var(--bg-elevated);
@@ -46,16 +46,30 @@ body {
     box-shadow: 0 10px 30px rgba(15,23,42,0.15);
 }
 
+.login-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.login-logo {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    object-fit: contain;
+    background: white;
+    padding: 4px;
+}
+
 .app-title {
-    margin: 0 0 4px;
-    text-align: center;
+    margin: 0;
 }
 
 .subtitle {
-    margin: 0 0 16px;
-    text-align: center;
+    margin: 2px 0 0;
     color: var(--text-muted);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
 .form-group {
@@ -136,6 +150,10 @@ body.theme-dark .form-group select {
     font-size: 0.8rem;
 }
 
+.hint {
+    margin-top: 4px;
+}
+
 /* Error */
 .error {
     color: #dc2626;
@@ -172,17 +190,13 @@ body.theme-dark .form-group select {
     gap: 10px;
 }
 
-.brand-logo {
+.brand-logo-img {
     width: 32px;
     height: 32px;
-    border-radius: 999px;
-    background: #1d4ed8;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    font-size: 0.9rem;
+    border-radius: 8px;
+    object-fit: contain;
+    background: white;
+    padding: 2px;
 }
 
 .brand-title {
@@ -218,6 +232,16 @@ body.theme-dark .form-group select {
     background: var(--sidebar-bg);
     color: var(--sidebar-text);
     padding: 12px 8px;
+}
+
+.sidebar-header {
+    padding: 4px 10px 10px;
+    font-size: 0.8rem;
+    color: #cbd5f5;
+}
+
+.sidebar-company {
+    opacity: 0.9;
 }
 
 .nav-item {
@@ -400,6 +424,48 @@ body.theme-dark .match-result {
 .help-list {
     font-size: 0.9rem;
     color: var(--text-muted);
+}
+
+/* Chatbot */
+.chat-window {
+    border-radius: 12px;
+    border: 1px solid var(--border-subtle);
+    padding: 10px;
+    height: 220px;
+    overflow-y: auto;
+    background: #f9fafb;
+}
+
+body.theme-dark .chat-window {
+    background: #020617;
+}
+
+.chat-message {
+    padding: 6px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    max-width: 90%;
+}
+
+.chat-message.bot {
+    background: #e5edff;
+    align-self: flex-start;
+}
+
+.chat-message.user {
+    background: #d1fae5;
+    align-self: flex-end;
+}
+
+.chat-input-row {
+    margin-top: 8px;
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input-row input {
+    flex: 1;
 }
 
 /* Responsive */
